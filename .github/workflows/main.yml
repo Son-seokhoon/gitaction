@@ -1,0 +1,29 @@
+name: Pythonversionaction
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"] #파이썬 버전 변수 선언
+
+
+    steps:
+      - uses: actions/checkout@v3 
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }} #각 버전의 환경을 셋팅
+
+      - name: Print Python version
+            #버전 확인 명령어
+        run: python -c "import sys; print(sys.version)" > python_version_${{ matrix.python-version }}.txt 
+        
+      - name: Save Python version as artifact
+        uses: actions/upload-artifact@v2 #아티팩트를 업로드
+        with:
+          name: python-version-${{ matrix.python-version }}
+          path: python_version_${{ matrix.python-version }}.txt #각버전의 이름으로 업로드
